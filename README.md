@@ -18,7 +18,7 @@ npm start
 ```
 If you want to enable the AI, just press the AI button.
 
-![image](https://github.com/RobinChiu/llm_tetris/blob/master/image/screen.png)
+![image](https://github.com/RobinChiu/llm_tetris/blob/main/image/screen.png)
 
 ## Contributing
 Through the AI code is from LLM, but I found the knowledge is from the following website.
