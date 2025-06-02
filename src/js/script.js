@@ -134,7 +134,7 @@ export function mergePiece(board, piece) {
     });
 }
 
-function clearLines(board) {
+export function clearLines(board) {
     let linesCleared = 0;
     
     for(let y = BOARD_HEIGHT - 1; y >= 0; y--) {
@@ -146,12 +146,18 @@ function clearLines(board) {
         }
     }
     
-    if(linesCleared > 0) {
+    if(linesCleared > 0 && typeof document !== 'undefined') {
         score += linesCleared * 100 * level;
-        document.getElementById('score').textContent = score;
+        const scoreElement = document.getElementById('score');
+        if (scoreElement) {
+            scoreElement.textContent = score;
+        }
         if(score >= level * 1000) {
             level++;
-            document.getElementById('level').textContent = level;
+            const levelElement = document.getElementById('level');
+            if (levelElement) {
+                levelElement.textContent = level;
+            }
         }
     }
     return linesCleared;

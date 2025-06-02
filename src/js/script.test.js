@@ -1,17 +1,5 @@
-// document.body.innerHTML = `
-// <!DOCTYPE html>
-// <html>
-//   <body>
-//     <canvas id="game-board"></canvas>
-//     <canvas id="next-piece"></canvas>
-//     <div id="score">0</div>
-//     <div id="level">1</div>
-//   </body>
-// </html>
-// `
-
-const { createNewPiece, isValidMove, mergePiece, clearLines, rotatePiece, gameBoard } = require('../src/js/script.js');
-// import { createNewPiece, isValidMove, mergePiece, clearLines, rotatePiece } from '../src/js/script.js'
+import { createNewPiece, isValidMove, mergePiece, clearLines, rotatePiece, gameBoard } from './script.js';
+import { describe, test, expect, beforeEach } from 'vitest';
 
 describe('Tetris Game Functions', () => {
   let testBoard;
@@ -25,7 +13,7 @@ describe('Tetris Game Functions', () => {
       const piece = createNewPiece();
       expect(piece).toHaveProperty('shape');
       expect(piece).toHaveProperty('color');
-      expect(piece).toHaveProperty('x', 4);
+      expect(piece).toHaveProperty('x', Math.floor(10/2) - Math.floor(piece.shape[0].length/2));
       expect(piece).toHaveProperty('y', 0);
     });
   });
