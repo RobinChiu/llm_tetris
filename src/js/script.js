@@ -1,5 +1,5 @@
-const BOARD_WIDTH = 10;
-const BOARD_HEIGHT = 20;
+export const BOARD_WIDTH = 10;
+export const BOARD_HEIGHT = 20;
 const BLOCK_SIZE = 30;
 
 // Tetromino shapes
@@ -25,17 +25,17 @@ const COLORS = {
 
 let score = 0;
 let level = 1;
-let gameBoard = Array(BOARD_HEIGHT).fill().map(() => Array(BOARD_WIDTH).fill(0));
-let currentPiece = null;
+export let gameBoard = Array(BOARD_HEIGHT).fill().map(() => Array(BOARD_WIDTH).fill(0));
+export let currentPiece = null;
 let nextPiece = null;
-let ctx = document.getElementById('game-board').getContext('2d');
-let nextCtx = document.getElementById('next-piece').getContext('2d');
+let ctx = null;
+let nextCtx = null;
 let gameInterval;
 let isAIEnabled = false;
 let aiMoveInterval;
 let moveInterval;
 
-class Piece {
+export class Piece {
     constructor(shape, color) {
         this.shape = shape;
         this.color = color;
@@ -44,14 +44,22 @@ class Piece {
     }
 }
 
+export function setAIEnabled(value) {
+    isAIEnabled = value;
+}
+
+export function getAIEnabled() {
+    return isAIEnabled;
+}
+
 // 核心遊戲邏輯
-function createNewPiece() {
+export function createNewPiece() {
     const shapes = Object.keys(SHAPES);
     const randomShape = shapes[Math.floor(Math.random() * shapes.length)];
     return new Piece(SHAPES[randomShape], COLORS[randomShape]);
 }
 
-function drawBoard() {
+export function drawBoard() {
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
     
     // 繪製現有方塊
@@ -101,7 +109,7 @@ function drawNextPiece() {
     }
 }
 
-function isValidMove(piece, newX, newY, board) {
+export function isValidMove(piece, newX, newY, board) {
     return piece.shape.every((row, dy) => {
         return row.every((value, dx) => {
             let x = newX + dx;
@@ -116,7 +124,7 @@ function isValidMove(piece, newX, newY, board) {
     });
 }
 
-function mergePiece(board, piece) {
+export function mergePiece(board, piece) {
     piece.shape.forEach((row, y) => {
         row.forEach((value, x) => {
             if(value) {
@@ -146,10 +154,10 @@ function clearLines(board) {
             document.getElementById('level').textContent = level;
         }
     }
-    return linesCleared
+    return linesCleared;
 }
 
-function gameLoop() {
+export function gameLoop() {
     if(currentPiece && isValidMove(currentPiece, currentPiece.x, currentPiece.y + 1, gameBoard)) {
         currentPiece.y++;
     } else {
@@ -169,84 +177,83 @@ function gameLoop() {
     drawBoard();
 }
 
-function resetGame() {
+export function resetGame() {
     gameBoard = Array(BOARD_HEIGHT).fill().map(() => Array(BOARD_WIDTH).fill(0));
     score = 0;
     level = 1;
     document.getElementById('score').textContent = score;
     document.getElementById('level').textContent = level;
-    setTimer()
+    setTimer();
 }
 
-function rotatePiece(shape) {
+export function rotatePiece(shape) {
     return shape[0].map((_, i) => 
         shape.map(row => row[i]).reverse()
     );
 }
 
-function setTimer() {
-    if(moveInterval)
-        clearInterval(moveInterval)
-    if(aiMoveInterval)
-        clearInterval(aiMoveInterval)
-    if (isAIEnabled) {
-        aiMoveInterval = setInterval(executeAIMove, 1000 / level);
-    } else {
-        moveInterval = setInterval(gameLoop, 1000 / level);
-    }
+export let setTimer = null;
+export function initTimer(executeAIMoveFunc) {
+    setTimer = function() {
+        if(moveInterval)
+            clearInterval(moveInterval)
+        if(aiMoveInterval)
+            clearInterval(aiMoveInterval)
+        if (getAIEnabled()) {
+            aiMoveInterval = setInterval(executeAIMoveFunc, 1000 / level);
+        } else {
+            moveInterval = setInterval(gameLoop, 1000 / level);
+        }
+    };
+    setTimer();
 }
 
-// 手動控制
-document.addEventListener('keydown', event => {
-    if(!currentPiece || isAIEnabled) return;
-    
-    switch(event.key) {
-        case 'ArrowLeft':
-            if(isValidMove(currentPiece, currentPiece.x - 1, currentPiece.y, gameBoard)) {
-                currentPiece.x--;
+export function setupGame(document) {
+    ctx = document.getElementById('game-board').getContext('2d');
+    nextCtx = document.getElementById('next-piece').getContext('2d');
+    // 手動控制
+    document.addEventListener('keydown', event => {
+        if(!currentPiece || getAIEnabled()) return;
+        switch(event.key) {
+            case 'ArrowLeft':
+                if(isValidMove(currentPiece, currentPiece.x - 1, currentPiece.y, gameBoard)) {
+                    currentPiece.x--;
+                    drawBoard();
+                }
+                break;
+            case 'ArrowRight':
+                if(isValidMove(currentPiece, currentPiece.x + 1, currentPiece.y, gameBoard)) {
+                    currentPiece.x++;
+                    drawBoard();
+                }
+                break;
+            case 'ArrowDown':
+                if(isValidMove(currentPiece, currentPiece.x, currentPiece.y + 1, gameBoard)) {
+                    currentPiece.y++;
+                    drawBoard();
+                }
+                break;
+            case 'ArrowUp':
+                const rotated = currentPiece.shape[0].map((_, i) =>
+                    currentPiece.shape.map(row => row[i]).reverse()
+                );
+                const originalShape = currentPiece.shape;
+                currentPiece.shape = rotated;
+                if(!isValidMove(currentPiece, currentPiece.x, currentPiece.y, gameBoard)) {
+                    currentPiece.shape = originalShape;
+                }
                 drawBoard();
-            }
-            break;
-        case 'ArrowRight':
-            if(isValidMove(currentPiece, currentPiece.x + 1, currentPiece.y, gameBoard)) {
-                currentPiece.x++;
-                drawBoard();
-            }
-            break;
-        case 'ArrowDown':
-            if(isValidMove(currentPiece, currentPiece.x, currentPiece.y + 1, gameBoard)) {
-                currentPiece.y++;
-                drawBoard();
-            }
-            break;
-        case 'ArrowUp':
-            const rotated = currentPiece.shape[0].map((_, i) =>
-                currentPiece.shape.map(row => row[i]).reverse()
-            );
-            const originalShape = currentPiece.shape;
-            currentPiece.shape = rotated;
-            if(!isValidMove(currentPiece, currentPiece.x, currentPiece.y, gameBoard)) {
-                currentPiece.shape = originalShape;
-            }
-            drawBoard();
-            break;
-        case ' ':
-            while(isValidMove(currentPiece, currentPiece.x, currentPiece.y + 1, gameBoard)) {
-                currentPiece.y++;
-            }
-            gameLoop();
-            break;
-    }
-});
+                break;
+            case ' ':
+                while(isValidMove(currentPiece, currentPiece.x, currentPiece.y + 1, gameBoard)) {
+                    currentPiece.y++;
+                }
+                gameLoop();
+                break;
+        }
+    });
 
-// 初始化遊戲
-nextPiece = createNewPiece();
-setTimer()
-
-module.exports = { 
-    createNewPiece, 
-    isValidMove, 
-    mergePiece, 
-    clearLines, 
-    rotatePiece 
+    // 初始化遊戲
+    nextPiece = createNewPiece();
+    initTimer();
 }

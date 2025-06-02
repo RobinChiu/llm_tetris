@@ -1,0 +1,53 @@
+body {
+    background-color: #1a1a1a;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+
+.game-container {
+    display: flex;
+    gap: 20px;
+}
+
+#game-board {
+    border: 2px solid #333;
+    background-color: #000;
+}
+
+.game-info {
+    color: white;
+    padding: 20px;
+    background-color: #333;
+    border-radius: 5px;
+}
+
+.next-piece {
+    margin-top: 20px;
+    width: 100px;
+    height: 100px;
+    background-color: #000;
+    position: relative;
+}
+
+.ai-controls {
+    margin-top: 20px;
+}
+
+.btn {
+    padding: 8px 16px;
+    border: 2px solid #fff;
+    background: transparent;
+    color: #fff;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.3s;
+}
+
+.btn:hover {
+    background: #fff;
+    color: #333;
+}

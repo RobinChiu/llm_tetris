@@ -1,15 +1,26 @@
+import { 
+    isValidMove, 
+    mergePiece, 
+    rotatePiece, 
+    gameBoard, 
+    currentPiece, 
+    BOARD_WIDTH, 
+    BOARD_HEIGHT,
+    getAIEnabled,
+    setAIEnabled,
+    Piece,
+    drawBoard,
+    gameLoop,
+    initTimer
+} from './script.js';
+
 // AI 配置參數
-const AI_INTERVAL = 100;
 const HEURISTIC_WEIGHTS = {
     landingHeight: 0.5,
     rowsCleared: 0.7,
     holes: -0.9,
     bumpiness: -0.2
 };
-
-// AI 狀態變數
-// let isAIEnabled = false;
-// let aiMoveInterval;
 
 // 輔助函數
 function calculateHoles(board) {
@@ -77,9 +88,9 @@ function findBestMove() {
     
     for (let rotation = 0; rotation < 4; rotation++) {
         const testPiece = new Piece(currentPiece.shape, currentPiece.color);
-    for (let r = 0; r < rotation; r++) {
-        testPiece.shape = rotatePiece(testPiece.shape);
-    }
+        for (let r = 0; r < rotation; r++) {
+            testPiece.shape = rotatePiece(testPiece.shape);
+        }
         
         const minX = -Math.floor(testPiece.shape[0].length/2);
         const maxX = BOARD_WIDTH - Math.floor(testPiece.shape[0].length/2);
@@ -102,10 +113,9 @@ function findBestMove() {
 }
 
 function executeAIMove() {
-    if (!isAIEnabled || !currentPiece) return;
+    if (!getAIEnabled() || !currentPiece) return;
     
     const {bestRotation, bestX} = findBestMove();
-    // console.log(bestRotation, bestX)
     
     for (let i = 0; i < bestRotation; i++) {
         currentPiece.shape = rotatePiece(currentPiece.shape);
@@ -116,13 +126,19 @@ function executeAIMove() {
     while (isValidMove(currentPiece, currentPiece.x, currentPiece.y + 1, gameBoard)) {
         currentPiece.y++;
     }
-    drawBoard()
+    drawBoard();
     gameLoop();
 }
 
-// AI 控制介面
-document.getElementById('ai-toggle').addEventListener('click', () => {
-    isAIEnabled = !isAIEnabled;
-    document.getElementById('ai-status').textContent = isAIEnabled ? '(已啟用)' : '(已停用)';
-    setTimer()
-});
+
+export function setupButton(document) {
+    // AI 控制介面
+    document.getElementById('ai-toggle').addEventListener('click', () => {
+        setAIEnabled(!getAIEnabled());
+        document.getElementById('ai-status').textContent = getAIEnabled() ? '(已啟用)' : '(已停用)';
+        // 初始化 AI
+        initTimer(executeAIMove);
+    });
+}
+
+

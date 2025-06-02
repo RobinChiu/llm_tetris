@@ -1,17 +1,17 @@
-document.body.innerHTML = `
-<!DOCTYPE html>
-<html>
-  <body>
-    <canvas id="game-board"></canvas>
-    <canvas id="next-piece"></canvas>
-    <div id="score">0</div>
-    <div id="level">1</div>
-  </body>
-</html>
-`
+// document.body.innerHTML = `
+// <!DOCTYPE html>
+// <html>
+//   <body>
+//     <canvas id="game-board"></canvas>
+//     <canvas id="next-piece"></canvas>
+//     <div id="score">0</div>
+//     <div id="level">1</div>
+//   </body>
+// </html>
+// `
 
-const { createNewPiece, isValidMove, mergePiece, clearLines, rotatePiece, gameBoard } = require('../script.js');
-// import { createNewPiece, isValidMove, mergePiece, clearLines, rotatePiece } from '../script.js'
+const { createNewPiece, isValidMove, mergePiece, clearLines, rotatePiece, gameBoard } = require('../src/js/script.js');
+// import { createNewPiece, isValidMove, mergePiece, clearLines, rotatePiece } from '../src/js/script.js'
 
 describe('Tetris Game Functions', () => {
   let testBoard;
